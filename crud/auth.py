@@ -1,13 +1,10 @@
 from db.base import listner_db
 from utils import utlis
 from schema import auth
-from passlib.context import CryptContext
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+from db.base import pwd_context
 
 class Auth:
     def getUser(self, username: str):
-        print("username", username)
         return listner_db.fetch({"username": username, utlis.COLLECTION: utlis.USER_COLLECTION})
 
     def createUser(self, user: auth.Createuser):

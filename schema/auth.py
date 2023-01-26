@@ -11,5 +11,9 @@ class Createuser(User):
 
     class Config:
         orm_mode = True
+
+class LoginUser(Createuser):
+    pass
+
         
     
