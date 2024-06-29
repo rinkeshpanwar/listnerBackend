@@ -3,7 +3,7 @@ from pydantic import BaseModel
 class QuestionBase(BaseModel):
     title: str
     description: str = None
-
+    description_text_tag: list = None
     class Config:
         orm_mode = True
 

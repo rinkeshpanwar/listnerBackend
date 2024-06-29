@@ -7,10 +7,12 @@ router = APIRouter()
 
 @router.post("/", response_model=CreateAnswerResponse, status_code=status.HTTP_201_CREATED)
 def create_answer(answer: CreateAnswerRequest, user = Depends(get_current_user)):
-    # check if question exists
-    question = CRUDQuestion.get_question_by_key(answer.question_key)
-    if question is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Question not found")
-    
-    # create answer
     return CRUDAnswer.create_answer(answer={**answer.dict(), "username": user.username})
+
+@router.get("/{question_id}")
+def get_answers(question_id: str):
+    return CRUDAnswer.get_answers(question_id=question_id)
+
+@router.delete("/{answer_id}")
+def delete_answer(answer_id: str, user = Depends(get_current_user)):
+    return CRUDAnswer.delete_answer(answer_id=answer_id, user=user)
