@@ -9,16 +9,17 @@ from utils.utlis import create_access_token, oauth2_scheme, ALGORITHM, SECRET_KE
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import Depends, HTTPException, status
 from crud.auth import AUTHCrud
-
+from sqlalchemy.orm import Session
+import deps
 router = APIRouter()
 
 @router.post("/token")
-async def login_for_access_token(user: OAuth2PasswordRequestForm = Depends()):
-    user_db = AUTHCrud.getUser(user.username)
-    if len(user_db._items) == 0:
+async def login_for_access_token(user: OAuth2PasswordRequestForm = Depends(), db:Session = Depends(deps.get_db)):
+    user_db = AUTHCrud.getUser(user.username,db =db)
+    if user_db is None:
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={"message": "user not found"})
 
-    if not pwd_context.verify(user.password, user_db._items[0]["password"]):
+    if not pwd_context.verify(user.password, user_db.password):
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={"message": "incorrect password"})
 
     token = create_access_token(data={"sub": user.username})
@@ -42,16 +43,17 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     return token_data
 
 @router.post("/signup", status_code=status.HTTP_201_CREATED)
-def signup(user: authSchema.Createuser) -> authSchema.User:
-    user_db = AUTHCrud.getUser(user.username)
-    print("user in database",user_db)
-    if len(user_db._items) > 0 :
+def signup(user: authSchema.Createuser,  db:Session = Depends(deps.get_db)) -> authSchema.User:
+    user_db = AUTHCrud.getUser(user.username, db=db)
+    if user_db is not None:
         return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"message": "user already exist"})
-    return AUTHCrud.createUser(user)
+    return AUTHCrud.createUser(user, db=db)
 
 @router.get("/allUser")
-def allUser():
-    return AUTHCrud.getAllUsers()
+def allUser(user = Depends(get_current_user),db:Session = Depends(deps.get_db)):
+    if (user.username == 'rinkesh' or user.username == 'admin'):
+        return AUTHCrud.getAllUsers(db=db)
+    return JSONResponse([])
 
 @router.get("/myself", response_model=authSchema.User)
 def mySelf(user = Depends(get_current_user)):
