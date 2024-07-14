@@ -53,7 +53,7 @@ def signup(user: authSchema.Createuser,  db:Session = Depends(deps.get_db)) -> a
 def allUser(user = Depends(get_current_user),db:Session = Depends(deps.get_db)):
     if (user.username == 'rinkesh' or user.username == 'admin'):
         return AUTHCrud.getAllUsers(db=db)
-    return JSONResponse([])
+    return JSONResponse(content=[], status_code=status.HTTP_200_OK)
 
 @router.get("/myself", response_model=authSchema.User)
 def mySelf(user = Depends(get_current_user)):

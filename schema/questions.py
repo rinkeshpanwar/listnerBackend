@@ -1,8 +1,8 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class QuestionBase(BaseModel):
-    title: str
-    description: str = None
+    title: str = Field(min_length=5)
+    description: str = Field(min_length=10)
     description_text_tag: list = None
     class Config:
         orm_mode = True
