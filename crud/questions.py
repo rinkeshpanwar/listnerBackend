@@ -2,6 +2,7 @@ from db.base import question_db
 from models.question import Question as QuestionModel
 from sqlalchemy.orm import Session
 from fastapi.responses import JSONResponse
+from fastapi import status
 
 class QuestionCrud:
     def create_question(self, question, db:Session):
@@ -18,8 +19,9 @@ class QuestionCrud:
         questions.views =  question['views']
         questions.user_id =  question['user_id']
         db.add(questions)
+        db.flush()
         db.commit()
-        return 
+        return JSONResponse(content={"message": "Created"}, status_code=status.HTTP_201_CREATED)
     
     def get_question_by_key(self, question_key: str):
         return question_db.get(question_key)
