@@ -14,6 +14,7 @@ class Question(Base):
 
     comment = Relationship('Comment', back_populates='question')
     user = Relationship('User', back_populates='question')
+    tags = Relationship('Tags', back_populates='question')
 
 class Comment(Base):
     id = Column(Integer, autoincrement=True, primary_key=True)
@@ -21,3 +22,10 @@ class Comment(Base):
 
     question_id = Column(Integer, ForeignKey('question.id'))
     question = Relationship('Question', back_populates='comment')
+
+class Tags(Base):
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    tagName = Column(Text, nullable= False)
+    question_id = Column(Integer, ForeignKey('question.id'))
+
+    question = Relationship('Question', back_populates='tags')
