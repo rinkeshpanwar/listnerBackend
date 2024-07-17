@@ -25,7 +25,7 @@ class Comment(Base):
 
 class Tags(Base):
     id = Column(Integer, autoincrement=True, primary_key=True)
-    tagName = Column(Text, nullable= False)
+    tagName = Column(String(200), nullable= False, index=True)
     question_id = Column(Integer, ForeignKey('question.id'))
 
     question = Relationship('Question', back_populates='tags')
