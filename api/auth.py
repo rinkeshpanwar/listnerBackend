@@ -22,7 +22,7 @@ async def login_for_access_token(user: OAuth2PasswordRequestForm = Depends(), db
     if not pwd_context.verify(user.password, user_db.password):
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={"message": "incorrect password"})
 
-    token = create_access_token(data={"sub": user.username})
+    token = create_access_token(data={"sub": user.username, "id": user_db.id})
 
     return {"access_token": token, "token_type": "bearer"}
 
@@ -34,10 +34,12 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        print("---payload us",payload)
         username: str = payload.get("sub")
-        if username is None:
+        id: int = payload.get("id")
+        if username is None or id is None:
             raise credentials_exception
-        token_data = TokenData(username=username)
+        token_data = TokenData(username=username, id=id)
     except JWTError:
         raise credentials_exception
     return token_data
@@ -55,6 +57,6 @@ def allUser(user = Depends(get_current_user),db:Session = Depends(deps.get_db)):
         return AUTHCrud.getAllUsers(db=db)
     return JSONResponse(content=[], status_code=status.HTTP_200_OK)
 
-@router.get("/myself", response_model=authSchema.User)
+@router.get("/myself", response_model=authSchema.MySelf)
 def mySelf(user = Depends(get_current_user)):
     return user

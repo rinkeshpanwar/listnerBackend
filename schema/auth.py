@@ -15,5 +15,11 @@ class Createuser(User):
 class LoginUser(Createuser):
     pass
 
+class MySelf(User):
+    id: int
+
+    class Config:
+        orm_mode = True
+
         
     

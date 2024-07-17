@@ -13,9 +13,10 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
 class TokenData(BaseModel):
     username: str = None
+    id: int = None
+
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()

@@ -10,8 +10,10 @@ class Question(Base):
     upvotes = Column(Integer, nullable=False)
     downvotes = Column(Integer, nullable=False)
     views = Column(Integer, nullable=False)
+    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
 
     comment = Relationship('Comment', back_populates='question')
+    user = Relationship('User', back_populates='question')
 
 class Comment(Base):
     id = Column(Integer, autoincrement=True, primary_key=True)
