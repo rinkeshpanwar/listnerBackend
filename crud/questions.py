@@ -3,8 +3,8 @@ from models.question import Question as QuestionModel
 from models.question import Tags as TagModel
 from sqlalchemy.orm import Session
 from fastapi.responses import JSONResponse
-from fastapi import status
-
+from fastapi import status, HTTPException
+from deps import get_db
 class QuestionCrud:
     def create_question(self, question, db:Session):
         db.begin()
@@ -36,28 +36,50 @@ class QuestionCrud:
             db.rollback()
             return JSONResponse(content={"message": "there was some problem while adding data"}, status_code=status.HTTP_400_BAD_REQUEST)
     
-    def get_question_by_key(self, question_key: str):
-        return question_db.get(question_key)
+    def get_question_by_key(self, question_key: str, db:Session):
+        # return question_db.get(question_key)
+        return db.query(QuestionModel).get(question_key)
     
     def get_question_by_username(self, question):
         pass
     
-    def upvote_question(self, question_key: str):
-        updates = {
-            "upvotes": question_db.util.increment(1)
-        }
-        return question_db.update(updates, question_key)
+    def upvote_question(self, question_key: str, db:Session):
+        # updates = {
+        #     "upvotes": question_db.util.increment(1)
+        # }
+        # return question_db.update(updates, question_key)
+        question_db:QuestionModel = db.query(QuestionModel).get(question_key)
+        if question_db is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Invalid question id is provided")
+        question_db.upvotes += 1
+        db.commit()
+        return True
     
-    def downvote_question(self, question_key: str):
-        updates = {
-            "downvotes": question_db.util.increment(1)
-        }
-        return question_db.update(updates, question_key)
+    def downvote_question(self, question_key: str, db:Session):
+        # updates = {
+        #     "downvotes": question_db.util.increment(1)
+        # }
+        # return question_db.update(updates, question_key)question_db:QuestionModel = db.query(QuestionModel).get(question_key)
+        question_db:QuestionModel = db.query(QuestionModel).get(question_key)
+        if question_db is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Invalid question id is provided")
+        question_db.downvotes += 1
+        db.flush()
+        db.commit()
+        return True
 
-    def viewed_question(self, question_key: str):
-        updates = {
-            "views": question_db.util.increment(1)
-        }
-        return question_db.update(updates, question_key)
+    def viewed_question(self, question_key: str, db:Session ):
+        # updates = {
+        #     "views": question_db.util.increment(1)
+        # }
+        # return question_db.update(updates, question_key)
+        question_db:QuestionModel = db.query(QuestionModel).get(question_key)
+        if question_db is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Invalid question id is provided")
+        question_db.views += 1
+        db.flush()
+        db.commit()
+        return True
+
         
 CRUDQuestion = QuestionCrud()
