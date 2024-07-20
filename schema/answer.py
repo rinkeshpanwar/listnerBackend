@@ -13,14 +13,14 @@ class CreateAnswerRequest(AnswerBase):
         orm_mode = True
 
 class CreateAnswerInDb(AnswerBase):
-    username: str
+    user_id: int
     question_key: str
 
     class Config:
         orm_mode = True
 
 class CreateAnswerResponse(CreateAnswerInDb):
-    key: str
+    id: int
 
     class Config:
         orm_mode = True

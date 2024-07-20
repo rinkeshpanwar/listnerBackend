@@ -8,7 +8,7 @@ class Answer(Base):
     answer = Column(Text, nullable=False)
     question_id = Column(Integer, ForeignKey("question.id"), nullable=False)
     answer_by = Column(Integer, ForeignKey('user.id'), nullable=False)
-    created_at = Column(DateTime, nullable=False, default=datetime.now())
+    created_at = Column(DateTime, nullable=False)
 
     question = Relationship('Question', back_populates='answer')
     user = Relationship('User', back_populates='answer')

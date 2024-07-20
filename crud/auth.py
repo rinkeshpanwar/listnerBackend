@@ -7,7 +7,7 @@ class Auth:
     def getUser(self, username: str, db: Session):
         print("username is", username)
         # return auth_db.fetch({"username": username})
-        return db.query(userModal).filter(userModal.user_name == username).get()
+        return db.query(userModal).filter(userModal.user_name == username).first()
 
     def createUser(self, user: auth.Createuser, db: Session):
         db_user = userModal()
