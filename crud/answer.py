@@ -5,8 +5,9 @@ from sqlalchemy.orm import Session
 from fastapi.responses import JSONResponse
 from fastapi import status
 from datetime import datetime
+from sqlalchemy.orm import joinedload
 class AnswerCrud:
-    def create_answer(self, answer: CreateAnswerInDb,db:Session):
+    def create_answer(self, answer: CreateAnswerInDb, db:Session):
         # answer_in_db = answer_db.put({**answer})
         # updates = {
         #     "answers": question_db.util.append(answer_in_db["key"])
@@ -23,10 +24,11 @@ class AnswerCrud:
         db.commit()
         return JSONResponse(content=True, status_code=status.HTTP_201_CREATED)
 
-    def get_answers(self, question_id: str):
-        question = question_db.get(question_id)
-        answers = [answer_db.get(answer_id) for answer_id in question["answers"]]
-        return answers
+    def get_answers(self, question_id: int, db:Session):
+        # question = question_db.get(question_id)
+        # answers = [answer_db.get(answer_id) for answer_id in question["answers"]]
+        # return answers
+        return db.query(AnswerModel).options(joinedload(AnswerModel.user)).filter(AnswerModel.question_id == question_id).all()
     
 
 CRUDAnswer = AnswerCrud()
