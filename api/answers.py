@@ -7,7 +7,7 @@ router = APIRouter()
 
 @router.post("/", response_model=CreateAnswerResponse, status_code=status.HTTP_201_CREATED)
 def create_answer(answer: CreateAnswerRequest, user = Depends(get_current_user)):
-    return CRUDAnswer.create_answer(answer={**answer.dict(), "username": user.username})
+    return CRUDAnswer.create_answer(answer={**answer.dict(), "id": user.id})
 
 @router.get("/{question_id}")
 def get_answers(question_id: str):

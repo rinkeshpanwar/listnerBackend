@@ -5,8 +5,9 @@ from sqlalchemy.orm import Session
 from models.user import User as userModal
 class Auth:
     def getUser(self, username: str, db: Session):
+        print("username is", username)
         # return auth_db.fetch({"username": username})
-        return db.query(userModal).filter(userModal.user_name == username).first()
+        return db.query(userModal).filter(userModal.user_name == username).get()
 
     def createUser(self, user: auth.Createuser, db: Session):
         db_user = userModal()

@@ -8,3 +8,4 @@ class User(Base):
     password = Column(String(255))
 
     question = Relationship('Question', back_populates='user')
+    answer = Relationship('Answer', back_populates='user')

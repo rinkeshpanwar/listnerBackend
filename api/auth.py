@@ -34,7 +34,6 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        print("---payload us",payload)
         username: str = payload.get("sub")
         id: int = payload.get("id")
         if username is None or id is None:
@@ -49,6 +48,7 @@ def signup(user: authSchema.Createuser,  db:Session = Depends(deps.get_db)) -> a
     user_db = AUTHCrud.getUser(user.username, db=db)
     if user_db is not None:
         return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"message": "user already exist"})
+    print("user creation proceed")
     return AUTHCrud.createUser(user, db=db)
 
 @router.get("/allUser")

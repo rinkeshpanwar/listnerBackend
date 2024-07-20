@@ -15,6 +15,7 @@ class Question(Base):
     comment = Relationship('Comment', back_populates='question')
     user = Relationship('User', back_populates='question')
     tags = Relationship('Tags', back_populates='question')
+    answer = Relationship('Answer', back_populates='question')
 
 class Comment(Base):
     id = Column(Integer, autoincrement=True, primary_key=True)
